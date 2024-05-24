@@ -67,6 +67,7 @@ class EqualWeightPortfolio:
         TODO: Complete Task 1 Below
         """
 
+        self.portfolio_weights[ list(self.portfolio_weights.keys())[1:] ] = 1/11
         """
         TODO: Complete Task 1 Above
         """
@@ -117,6 +118,19 @@ class RiskParityPortfolio:
         """
         TODO: Complete Task 2 Below
         """
+        new_returns = df_returns[ list(df_returns.keys())[1:] ]
+
+        stds = new_returns.std()
+        volatility = 1/stds
+        print(volatility)
+        denominator = volatility.sum()
+        print(denominator)
+
+        weights = volatility / denominator
+        print(weights.sum())
+
+        for k, v in weights.items():
+            self.portfolio_weights[k].fillna(v, inplace=True)
 
         """
         TODO: Complete Task 2 Above
@@ -124,6 +138,7 @@ class RiskParityPortfolio:
 
         self.portfolio_weights.ffill(inplace=True)
         self.portfolio_weights.fillna(0, inplace=True)
+        print(self.portfolio_weights)
 
     def calculate_portfolio_returns(self):
         # Ensure weights are calculated
