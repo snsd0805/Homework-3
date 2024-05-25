@@ -120,17 +120,15 @@ class RiskParityPortfolio:
         """
         new_returns = df_returns[ list(df_returns.keys())[1:] ]
 
-        stds = new_returns.std()
+        stds = new_returns.rolling(window=self.lookback).std()
+        stds = stds.shift(periods=1)
         volatility = 1/stds
-        print(volatility)
-        denominator = volatility.sum()
-        print(denominator)
+        denominator = volatility.sum(axis=1)
+        weight = volatility.div(denominator, axis=0)
+        for k in weight.keys():
+            self.portfolio_weights[k] = weight[k]
 
-        weights = volatility / denominator
-        print(weights.sum())
-
-        for k, v in weights.items():
-            self.portfolio_weights[k].fillna(v, inplace=True)
+        self.portfolio_weights.iloc[50] = 0.0
 
         """
         TODO: Complete Task 2 Above
@@ -138,7 +136,6 @@ class RiskParityPortfolio:
 
         self.portfolio_weights.ffill(inplace=True)
         self.portfolio_weights.fillna(0, inplace=True)
-        print(self.portfolio_weights)
 
     def calculate_portfolio_returns(self):
         # Ensure weights are calculated
