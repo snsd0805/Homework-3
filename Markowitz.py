@@ -193,6 +193,7 @@ class MeanVariancePortfolio:
         mu = R_n.mean().values
         n = len(R_n.columns)
 
+
         with gp.Env(empty=True) as env:
             env.setParam("OutputFlag", 0)
             env.setParam("DualReductions", 0)
@@ -204,9 +205,10 @@ class MeanVariancePortfolio:
 
                 # Sample Code: Initialize Decision w and the Objective
                 # NOTE: You can modify the following code
-                w = model.addMVar(n, name="w", ub=1)
-                model.setObjective(w.sum(), gp.GRB.MAXIMIZE)
+                w = model.addMVar(n, name="w", lb=0)
 
+                model.setObjective((w@mu-gamma/2*w@Sigma@w).sum(), gp.GRB.MAXIMIZE)
+                model.addConstr(w.sum() == 1, 'w_sum_constranit')
                 """
                 TODO: Complete Task 3 Below
                 """
